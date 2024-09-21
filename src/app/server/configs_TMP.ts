@@ -74,9 +74,9 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
   {
     id: "080287",
     metadata: {
-      name: "Donate 5 USD of ARB token",
+      name: "Donate 5 USD of ETH token",
       url: "https://adamik.io",
-      description: "Payment of 5 USD equivalent of ARB",
+      description: "Payment of 5 USD equivalent of ETH (Arbitrum)",
       imageUrl: "https://picsum.photos/500/300",
     },
     transactionData: {
@@ -85,7 +85,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       sender: "", // Completed during blink execution
       recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215",
       amountUSD: "5",
-      amount: "8218952905399853000",
+      amount: "2100000000000000",
     },
   },
   {
