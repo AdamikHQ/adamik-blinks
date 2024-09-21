@@ -4,6 +4,8 @@ import { NetworkIcon } from "@web3icons/react"; // Assuming this is the correct 
 import { BlinkConfig } from "~/types/blinks"; // Assuming this is the correct path
 import { TransactionData, TransactionMode } from "~/types/adamik"; // Assuming this is the correct path
 import { BLINK_CONFIGS } from "~/server/configs_TMP";
+import logo from "./ube.png"; // Import your logo image
+import Image from "next/image"; // Import Image component from Next.js
 
 // Add an SVG arrow icon or use a text-based arrow
 const LeftArrowIcon = () => (
@@ -84,7 +86,13 @@ const DonatePage = () => {
   // First step: User selects either "Donation Blink" or "Staking Blink"
   if (selectedOption === null) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 w-full">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 w-full">
+        {/* Logo centered above the cards */}
+        <div className="mb-8">
+          <Image src={logo} alt="Logo" width={150} height={150} />
+        </div>
+
+        {/* Cards Container */}
         <div className="flex justify-around w-full max-w-6xl">
           {/* Donation Blink Card */}
           <div
@@ -115,7 +123,6 @@ const DonatePage = () => {
       </div>
     );
   }
-
   // If "Donation Blink" is selected, render the donation form
   if (selectedOption === "donation") {
     return (
