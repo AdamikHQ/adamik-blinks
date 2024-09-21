@@ -40,7 +40,7 @@ const BLINK_CONFIGS: Map<string, BlinkConfig> = new Map([
     },
   ],
   [
-    "test",
+    "default",
     {
       metadata: {
         name: "Donate to Hakim",
