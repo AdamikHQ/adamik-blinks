@@ -241,8 +241,8 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
       config={blinkConfig}
       action={action}
       chain={selectedChain}
-      amount={transaction?.data.amount!}
-      setTransactionAmount={setTransactionAmount}
+      //amount={blinkConfig.transactionData.amount}
+      //setTransactionAmount={setTransactionAmount}
     />
   );
 }
