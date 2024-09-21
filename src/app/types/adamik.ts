@@ -31,6 +31,7 @@ export type TransactionData = {
   chainId: string;
   mode: TransactionMode;
   amount: string;
+  amountUSD?: string;
   sender: string;
   recipient: string;
   validatorAddress?: string;

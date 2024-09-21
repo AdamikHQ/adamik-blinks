@@ -1,14 +1,26 @@
 "use client";
 import React, { useState } from "react";
 import { TokenBTC, TokenETH, TokenATOM } from "@web3icons/react";
+import { BlinkConfig } from "~/types/blinks"; // Assuming this is the correct path
+import { TransactionData, TransactionMode } from "~/types/adamik"; // Assuming this is the correct path
 
 const DonatePage = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedAsset, setSelectedAsset] = useState("BTC");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for controlling dropdown visibility
 
+  // New form fields
+  const [blinkName, setBlinkName] = useState("");
+  const [blinkDescription, setBlinkDescription] = useState("");
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [defaultAmountUSD, setDefaultAmountUSD] = useState("");
+
   const handleSelectDonation = () => {
     setSelectedOption("donation");
+  };
+
+  const handleSelectStaking = () => {
+    setSelectedOption("staking");
   };
 
   const handleAssetChange = (asset: string) => {
@@ -16,6 +28,75 @@ const DonatePage = () => {
     setIsDropdownOpen(false); // Close the dropdown after selection
   };
 
+  // Counter to simulate blink generation
+  let blinkCounter = 0;
+
+  const handleDeploy = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Increment counter for new blink
+    blinkCounter += 1;
+    const blinkId = `default-${blinkCounter.toString().padStart(4, "0")}`;
+
+    const newBlinkConfig: BlinkConfig = {
+      metadata: {
+        name: blinkName,
+        url: "https://adamik.io",
+        description: blinkDescription,
+        imageUrl: "https://picsum.photos/500/300",
+      },
+      transactionData: {
+        chainId: selectedAsset, // Assume the chainId is the selected asset
+        mode: TransactionMode.TRANSFER, // Use enum value here
+        sender: "", // Sender completed during blink execution
+        recipient: recipientAddress,
+        amount: "", // Placeholder if needed for future use
+        amountUSD: defaultAmountUSD,
+      } as TransactionData,
+    };
+
+    // For now, logging the new blink configuration
+    console.log("Blink Config Generated: ", blinkId, newBlinkConfig);
+
+    // Here you would submit or use the `newBlinkConfig` to trigger any API or state update
+  };
+
+  // First step: User selects either "Donation Blink" or "Staking Blink"
+  if (selectedOption === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 w-full">
+        <div className="flex justify-around w-full max-w-6xl">
+          {/* Donation Blink Card */}
+          <div
+            className="bg-white shadow-md w-1/2 p-8 m-4 cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={handleSelectDonation}
+          >
+            <h2 className="text-2xl font-bold mb-4 text-gray-600">
+              Create a Donation Blink
+            </h2>
+            <p className="text-gray-600">
+              Set up a blink for receiving donations on your address
+            </p>
+          </div>
+
+          {/* Staking Blink Card */}
+          <div
+            className="bg-white shadow-md w-1/2 p-8 m-4 cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={handleSelectStaking}
+          >
+            <h2 className="text-2xl font-bold mb-4 text-gray-600">
+              Create a Staking Blink
+            </h2>
+            <p className="text-gray-600">
+              Set up a blink for receiving delegation on your validator
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If "Donation Blink" is selected, render the donation form
   if (selectedOption === "donation") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 w-full">
@@ -28,7 +109,33 @@ const DonatePage = () => {
               Select the asset, amount, and destination address
             </p>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleDeploy}>
+              {/* Blink Details */}
+              <div className="text-left">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Blink Name
+                </label>
+                <input
+                  type="text"
+                  value={blinkName}
+                  onChange={(e) => setBlinkName(e.target.value)}
+                  placeholder="Enter Blink Name"
+                  className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+              </div>
+
+              <div className="text-left">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Blink Description
+                </label>
+                <textarea
+                  value={blinkDescription}
+                  onChange={(e) => setBlinkDescription(e.target.value)}
+                  placeholder="Enter Blink Description"
+                  className="w-full h-12 p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+              </div>
+
               {/* Custom Dropdown for Asset Selection */}
               <div className="text-left">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -60,7 +167,6 @@ const DonatePage = () => {
                     <span className="text-black">{selectedAsset}</span>
                   </div>
 
-                  {/* Dropdown Menu */}
                   {isDropdownOpen && (
                     <div className="absolute left-0 mt-2 bg-white border rounded-lg w-full z-10">
                       <div
@@ -105,6 +211,8 @@ const DonatePage = () => {
                 </label>
                 <input
                   type="text"
+                  value={recipientAddress}
+                  onChange={(e) => setRecipientAddress(e.target.value)}
                   placeholder="0x0000...0000"
                   className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 />
@@ -117,6 +225,8 @@ const DonatePage = () => {
                 </label>
                 <input
                   type="text"
+                  value={defaultAmountUSD}
+                  onChange={(e) => setDefaultAmountUSD(e.target.value)}
                   placeholder="123"
                   className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 />
@@ -142,37 +252,9 @@ const DonatePage = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 w-full">
-      <div className="flex justify-around w-full max-w-6xl">
-        {/* Donation Blink Card */}
-        <div
-          className="bg-white shadow-md w-1/2 p-8 m-4 cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={handleSelectDonation}
-        >
-          <h2 className="text-2xl font-bold mb-4 text-gray-600">
-            Create a Donation Blink
-          </h2>
-          <p className="text-gray-600">
-            Set up a blink for receiving donations on your address
-          </p>
-        </div>
+  // Add a similar form for "staking" if needed in future
 
-        {/* Staking Blink Card */}
-        <div
-          className="bg-white shadow-md w-1/2 p-8 m-4 cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => handleAssetChange("staking")}
-        >
-          <h2 className="text-2xl font-bold mb-4 text-gray-600">
-            Create a Staking Blink
-          </h2>
-          <p className="text-gray-600">
-            Set up a blink for receiving delegation on your validator
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  return null;
 };
 
 export default DonatePage;
