@@ -21,6 +21,24 @@ const BLINK_CONFIGS: Map<string, BlinkConfig> = new Map([
       },
     },
   ],
+  [
+    "test",
+    {
+      metadata: {
+        name: "Donate to Hakim",
+        url: "https://adamik.io",
+        description: "The easiest way to scale blockchain integration",
+        imageUrl: "https://picsum.photos/500/300",
+      },
+      transactionData: {
+        chainId: "base",
+        mode: TransactionMode.TRANSFER,
+        sender: "", // Completed during blink execution
+        recipient: "0xbD69C010bfa8C166346C57239D25e15F61686A37",
+        amount: "100000000000000000", // 1 ETH
+      },
+    },
+  ],
 ]);
 
 export { BLINK_CONFIGS };
