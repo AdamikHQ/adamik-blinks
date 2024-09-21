@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import { TokenBTC, TokenETH, TokenATOM } from "@web3icons/react";
+import { NetworkIcon } from "@web3icons/react"; // Assuming this is the correct path
 import { BlinkConfig } from "~/types/blinks"; // Assuming this is the correct path
 import { TransactionData, TransactionMode } from "~/types/adamik"; // Assuming this is the correct path
+import { BLINK_CONFIGS } from "~/server/configs_TMP";
 
 const DonatePage = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [selectedAsset, setSelectedAsset] = useState("BTC");
+  const [selectedNetwork, setSelectedNetwork] = useState("linea"); // Default to Linea
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for controlling dropdown visibility
 
   // New form fields
@@ -23,8 +24,8 @@ const DonatePage = () => {
     setSelectedOption("staking");
   };
 
-  const handleAssetChange = (asset: string) => {
-    setSelectedAsset(asset);
+  const handleNetworkChange = (network: string) => {
+    setSelectedNetwork(network);
     setIsDropdownOpen(false); // Close the dropdown after selection
   };
 
@@ -46,7 +47,7 @@ const DonatePage = () => {
         imageUrl: "https://picsum.photos/500/300",
       },
       transactionData: {
-        chainId: selectedAsset, // Assume the chainId is the selected asset
+        chainId: selectedNetwork, // Use selected network for chainId
         mode: TransactionMode.TRANSFER, // Use enum value here
         sender: "", // Sender completed during blink execution
         recipient: recipientAddress,
@@ -57,7 +58,7 @@ const DonatePage = () => {
 
     // For now, logging the new blink configuration
     console.log("Blink Config Generated: ", blinkId, newBlinkConfig);
-
+    BLINK_CONFIGS.set(blinkId, newBlinkConfig);
     // Here you would submit or use the `newBlinkConfig` to trigger any API or state update
   };
 
@@ -136,7 +137,7 @@ const DonatePage = () => {
                 />
               </div>
 
-              {/* Custom Dropdown for Asset Selection */}
+              {/* Custom Dropdown for Network Selection */}
               <div className="text-left">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Asset to Receive
@@ -145,35 +146,25 @@ const DonatePage = () => {
                   className="relative inline-block w-full cursor-pointer"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  <div className="bg-white border p-3 rounded-lg flex items-center justify-between">
-                    {selectedAsset === "BTC" && (
-                      <TokenBTC
-                        variant="mono"
-                        className="h-6 mr-2 text-black"
-                      />
-                    )}
-                    {selectedAsset === "ETH" && (
-                      <TokenETH
-                        variant="mono"
-                        className="h-6 mr-2 text-black"
-                      />
-                    )}
-                    {selectedAsset === "ATOM" && (
-                      <TokenATOM
-                        variant="mono"
-                        className="h-6 mr-2 text-black"
-                      />
-                    )}
-                    <span className="text-black">{selectedAsset}</span>
+                  <div className="bg-white border p-3 rounded-lg flex items-center justify-start">
+                    {/* Replace TokenIcon with NetworkIcon */}
+                    <NetworkIcon
+                      network={selectedNetwork}
+                      variant="mono"
+                      className="h-6 mr-2 text-black"
+                    />
+                    <span className="text-black">{selectedNetwork}</span>
                   </div>
 
                   {isDropdownOpen && (
                     <div className="absolute left-0 mt-2 bg-white border rounded-lg w-full z-10">
+                      {/* Add new networks here */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleAssetChange("BTC")}
+                        onClick={() => handleNetworkChange("bitcoin")}
                       >
-                        <TokenBTC
+                        <NetworkIcon
+                          network="bitcoin"
                           variant="mono"
                           className="h-6 mr-2 text-black"
                         />
@@ -181,9 +172,10 @@ const DonatePage = () => {
                       </div>
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleAssetChange("ETH")}
+                        onClick={() => handleNetworkChange("ethereum")}
                       >
-                        <TokenETH
+                        <NetworkIcon
+                          network="ethereum"
                           variant="mono"
                           className="h-6 mr-2 text-black"
                         />
@@ -191,13 +183,47 @@ const DonatePage = () => {
                       </div>
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleAssetChange("ATOM")}
+                        onClick={() => handleNetworkChange("cosmos")}
                       >
-                        <TokenATOM
+                        <NetworkIcon
+                          network="cosmos"
                           variant="mono"
                           className="h-6 mr-2 text-black"
                         />
                         <span className="text-black">ATOM (Cosmos)</span>
+                      </div>
+                      <div
+                        className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleNetworkChange("rootstock")}
+                      >
+                        <NetworkIcon
+                          network="rootstock"
+                          variant="mono"
+                          className="h-6 mr-2 text-black"
+                        />
+                        <span className="text-black">RSK (RootStock)</span>
+                      </div>
+                      <div
+                        className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleNetworkChange("linea")}
+                      >
+                        <NetworkIcon
+                          network="linea"
+                          variant="mono"
+                          className="h-6 mr-2 text-black"
+                        />
+                        <span className="text-black">Linea (Ethereum)</span>
+                      </div>
+                      <div
+                        className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleNetworkChange("optimism")}
+                      >
+                        <NetworkIcon
+                          network="optimism"
+                          variant="mono"
+                          className="h-6 mr-2 text-black"
+                        />
+                        <span className="text-black">Optimism (L2)</span>
                       </div>
                     </div>
                   )}
@@ -251,8 +277,6 @@ const DonatePage = () => {
       </div>
     );
   }
-
-  // Add a similar form for "staking" if needed in future
 
   return null;
 };
