@@ -1,6 +1,6 @@
 "use server";
 
-import { ADAMIK_API_URL, ADAMIK_API_KEY } from "~/server/env";
+import { ADAMIK_API_URL } from "~/server/env";
 import { Chain } from "~/types/adamik";
 
 type GetChainsResponse = {
@@ -11,7 +11,7 @@ type GetChainsResponse = {
 export const getChains = async (): Promise<Record<string, Chain> | null> => {
   const response = await fetch(`${ADAMIK_API_URL}/chains`, {
     headers: {
-      Authorization: ADAMIK_API_KEY,
+      Authorization: process.env.ADAMIK_API_KEY || "",
       "Content-Type": "application/json",
     },
     method: "GET",
