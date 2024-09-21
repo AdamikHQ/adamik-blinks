@@ -9,9 +9,13 @@ export type BroadcastResponse = {
 };
 
 // TODO Better API error management, consistent for all endpoints
-export const broadcast = async (
+export const transactionBroadcast = async (
   transaction: Transaction
 ): Promise<BroadcastResponse> => {
+  //*
+  console.log("XXX - BROADCAST - transaction:", transaction);
+  return { hash: "dummy" };
+  /*/
   const response = await fetch(`${ADAMIK_API_URL}/transaction/broadcast`, {
     headers: {
       Authorization: process.env.ADAMIK_API_KEY || "",
@@ -27,4 +31,5 @@ export const broadcast = async (
   }
 
   return result as BroadcastResponse;
+  //*/
 };

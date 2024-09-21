@@ -1,13 +1,15 @@
 import { WalletName } from "~/types/wallets";
 import { WalletContextType } from "../hooks/useWallet";
 import { WalletClientContext } from "@cosmos-kit/core";
-import { Chain, Transaction } from "~/types/adamik";
+import { Account, Chain, Transaction } from "~/types/adamik";
 
 export class Keplr {
-  static getAddresses = async (
+  static getAccounts = async (
     sdk: WalletClientContext,
-    wallet: WalletContextType,
-    cosmosChainIdsMapping: Map<string, string>
+    //wallet: WalletContextType,
+    cosmosChainIdsMapping: Map<string, string>,
+    setAccounts: (accounts: Account[]) => void,
+    setCraftTransaction: (craft: boolean) => void
   ): Promise<void> => {
     const { client, status } = sdk;
 
@@ -30,7 +32,8 @@ export class Keplr {
         try {
           const account = await client.getAccount?.(nativeId);
           if (account) {
-            wallet.addAccounts([
+            //wallet.addAccounts([
+            setAccounts([
               {
                 address: account.address,
                 pubKey: Buffer.from(account.pubkey).toString("hex"),
@@ -38,9 +41,10 @@ export class Keplr {
                 signer: WalletName.KEPLR,
               },
             ]);
+            setCraftTransaction(true);
           }
         } catch (err) {
-          console.warn("Failed to connect to Keplr wallet...", err);
+          console.warn("Failed to retrieve address from Keplr wallet...", err);
           return;
         }
       });

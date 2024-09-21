@@ -3,43 +3,62 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSDK } from "@metamask/sdk-react";
 import { useChains } from "~/client/hooks/useChains";
-import { useWallet } from "~/client/hooks/useWallet";
-import { useTransaction } from "~/client/hooks/useTransaction";
-import { BlinkConfig } from "~/types/blinks";
 import { BLINK_CONFIGS } from "~/server/configs_TMP";
-import { useEncodeTransaction } from "~/client/hooks/useEncodeTransaction";
 import { Metamask } from "~/client/wallets/metamask";
-import { TransactionData } from "~/types/adamik";
+import { Account, Transaction, TransactionData } from "~/types/adamik";
 import { BlinkCard } from "~/client/ui/BlinkCard";
 import { useWalletClient } from "@cosmos-kit/react-lite";
 import { Keplr } from "~/client/wallets/keplr";
+//import { transactionEncode } from "~/client/api/adamik/encode";
+//import { transactionBroadcast } from "~/client/api/adamik/broadcast";
+import { useEncodeTransaction } from "~/client/hooks/useEncodeTransaction";
 import { useBroadcastTransaction } from "~/client/hooks/useBroadcastTransaction";
 
 export default function Blink({ params }: { params: { blinkId: string } }) {
+  const { blinkId } = params;
+
   const { sdk: metamaskSdk } = useSDK();
   const keplrSdk = useWalletClient("keplr-extension");
 
+  const [evmAccounts, setEvmAccounts] = useState<Account[]>([]);
+  const [craftEvmTransaction, setCraftEvmTransaction] =
+    useState<boolean>(false);
+  const [signEvmTransaction, setSignEvmTransaction] = useState<boolean>(false);
+  const [evmTransaction, setEvmTransaction] = useState<Transaction | undefined>(
+    undefined
+  );
+
+  const [cosmosAccounts, setCosmosAccounts] = useState<Account[]>([]);
+  const [craftCosmosTransaction, setCraftCosmosTransaction] =
+    useState<boolean>(false);
+  const [cosmosTransaction, setCosmosTransaction] = useState<
+    Transaction | undefined
+  >(undefined);
+
+  const [bitcoinAccounts, setBitcoinAccounts] = useState<Account[]>([]); // TODO
+
   const { data: chains } = useChains();
-  // FIXME walletContext is overkill, could be removed
-  const walletContext = useWallet();
-  const { transaction, setTransaction, setTransactionHash } = useTransaction();
 
   // TODO Handle UI setting + persistence in local storage
-  const [selectedChainId, setSelectedChainId] = useState<string>("base"); // FIXME hardcoded
-  const [blinkConfig, setBlinkConfig] = useState<BlinkConfig>(
-    BLINK_CONFIGS.get("default-base")! // FIXME hardcoded
+  // TODO Dissociate a blink from a chainId, i.e allow a blink to work with different chainIds
+  //const [selectedChainId, setSelectedChainId] = useState<string>("osmosis");
+
+  const blinkConfig = useMemo(
+    () => BLINK_CONFIGS.get(blinkId) || BLINK_CONFIGS.get("default")!,
+    [blinkId]
   );
 
   const { mutate: encodeTransaction } = useEncodeTransaction();
-
   const { mutate: broadcastTransaction } = useBroadcastTransaction();
 
   const selectedChain = useMemo(
     () =>
       (chains &&
-        Object.values(chains).find((chain) => chain.id === selectedChainId)) ||
+        Object.values(chains).find(
+          (chain) => chain.id === blinkConfig.transactionData.chainId
+        )) ||
       undefined,
-    [chains, selectedChainId]
+    [blinkConfig.transactionData.chainId, chains]
   );
 
   const evmChains = useMemo(
@@ -55,22 +74,14 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
 
   const cosmosChains = useMemo(
     () =>
-      chains && Object.values(chains).filter((chain) => chain.family === "evm"),
+      chains &&
+      Object.values(chains).filter((chain) => chain.family === "cosmos"),
     [chains]
   );
 
   const cosmosChainIds = useMemo(
-    () => evmChains && evmChains.map((chain) => chain.id),
-    [evmChains]
-  );
-
-  const setTransactionAmount = useCallback(
-    (amount: string) => {
-      if (transaction && !isNaN(Number(amount))) {
-        transaction.data.amount = amount;
-      }
-    },
-    [transaction]
+    () => cosmosChains && cosmosChains.map((chain) => chain.id),
+    [cosmosChains]
   );
 
   // Build a mapping table of: adamik chain IDs <> cosmos native chain IDs
@@ -84,156 +95,143 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
         );
   }, [chains, cosmosChainIdsMapping]);
 
-  const decimals = useMemo(
-    () =>
-      (chains &&
-        Object.values(chains!)?.find((chain) => chain.id === selectedChainId)
-          ?.decimals) ||
-      undefined,
-    [chains, selectedChainId]
-  );
-
-  useEffect(() => {
-    BLINK_CONFIGS.has(params.blinkId) &&
-      setBlinkConfig(BLINK_CONFIGS.get(params.blinkId)!);
-  }, [params.blinkId]);
-
-  const craftTransaction = useCallback(() => {
-    // FIXME How to ensure to only propose chainIds for available addresses ?
-    const sender = walletContext.accounts.find(
-      (account) => account.chainId === selectedChainId
-    )?.address;
-
-    if (!sender) {
-      return;
+  const metamaskAction = useCallback(() => {
+    if (!evmAccounts.length) {
+      Metamask.getAccounts(metamaskSdk!, evmChainIds!, setEvmAccounts);
     }
 
-    const transactionData: TransactionData = {
-      ...blinkConfig.transactionData,
-      sender,
-      format: "json",
-    };
+    if (evmAccounts.length) {
+      setCraftEvmTransaction(true);
+    }
+  }, [evmAccounts.length, evmChainIds, metamaskSdk]);
 
-    encodeTransaction(transactionData, {
-      onSuccess: (settledTransaction) => {
-        setTransaction(undefined);
-        setTransactionHash(undefined);
-        if (settledTransaction) {
-          if (
-            settledTransaction.status.errors &&
-            settledTransaction.status.errors.length > 0
-          ) {
-            console.warn(
-              "Adamik API validation error: ",
-              settledTransaction.status.errors[0].message
-            );
-          } else {
-            setTransaction(settledTransaction);
-          }
-        } else {
-          console.warn("Unknown Adamik API error");
-        }
-      },
-      onError: (error) => {
-        console.warn("Adamik API error: ", error);
-        setTransaction(undefined);
-        setTransactionHash(undefined);
-      },
-    });
+  useEffect(() => {
+    if (craftEvmTransaction && evmAccounts.length) {
+      // FIXME How to ensure to only propose chainIds for available addresses ?
+      const sender = evmAccounts.find(
+        (account) => account.chainId === blinkConfig.transactionData.chainId
+      )?.address;
+
+      if (!sender) {
+        return;
+      }
+
+      const transactionData: TransactionData = {
+        ...blinkConfig.transactionData,
+        sender,
+        format: "json",
+      };
+
+      //transactionEncode(transactionData, setEvmTransaction);
+      encodeTransaction(transactionData, {
+        onSuccess: (settledTransaction) => {
+          setEvmTransaction(settledTransaction);
+          setSignEvmTransaction(true);
+        },
+      });
+
+      setCraftEvmTransaction(false);
+    }
   }, [
     blinkConfig.transactionData,
+    craftEvmTransaction,
     encodeTransaction,
-    selectedChainId,
-    setTransaction,
-    setTransactionHash,
-    walletContext,
+    evmAccounts,
   ]);
 
-  // CRAFTING
-  const action = useCallback(() => {
-    if (evmChainIds?.includes(selectedChainId)) {
-      Metamask.getAddresses(metamaskSdk!, walletContext, evmChainIds!);
-    } else if (cosmosChainIds?.includes(selectedChainId)) {
-      Keplr.getAddresses(keplrSdk!, walletContext, cosmosChainIdsMapping);
+  useEffect(() => {
+    if (signEvmTransaction && evmTransaction?.encoded) {
+      Metamask.signAndBroadcast(
+        metamaskSdk!,
+        evmChains!,
+        evmTransaction!,
+        setSignEvmTransaction,
+        setEvmTransaction
+      );
     }
-
-    craftTransaction();
-  }, [
-    cosmosChainIds,
-    cosmosChainIdsMapping,
-    craftTransaction,
-    evmChainIds,
-    keplrSdk,
-    metamaskSdk,
-    selectedChainId,
-    walletContext,
-  ]);
+  }, [evmChains, evmTransaction, metamaskSdk, signEvmTransaction]);
 
   /*
-  // METAMASK
-  const actionMetamask = useCallback(() => {
-    Metamask.getAddresses(metamaskSdk!, walletContext, evmChainIds!);
-    craftTransaction();
-  }, [craftTransaction, evmChainIds, metamaskSdk, walletContext]);
+  const keplrAction = useCallback(() => {
+    const chainId = blinkConfig.transactionData.chainId;
 
-  // KEPLR (CRAFTING)
-  const actionKeplr = useCallback(() => {
-    Keplr.getAddresses(keplrSdk!, walletContext, cosmosChainIdsMapping);
-    craftTransaction();
-  }, [cosmosChainIdsMapping, craftTransaction, keplrSdk, walletContext]);
-  */
-
-  // SIGNING
-  useEffect(() => {
-    if (transaction?.encoded) {
-      if (evmChainIds?.includes(selectedChainId)) {
-        Metamask.signAndBroadcast(
-          metamaskSdk!,
-          walletContext,
-          evmChains!,
-          transaction!
-        );
-      } else if (cosmosChainIds?.includes(selectedChainId)) {
-        Keplr.sign(keplrSdk!, cosmosChains!, transaction!, setTransaction);
-      }
+    if (!cosmosAccounts.length) {
+      Keplr.getAccounts(
+        keplrSdk!,
+        cosmosChainIdsMapping,
+        setCosmosAccounts,
+        setCraftCosmosTransaction
+      );
     }
   }, [
-    cosmosChainIds,
-    cosmosChains,
-    evmChainIds,
-    evmChains,
+    blinkConfig.transactionData.chainId,
+    cosmosAccounts.length,
+    cosmosChainIdsMapping,
     keplrSdk,
-    metamaskSdk,
-    selectedChainId,
-    setTransaction,
-    transaction,
-    walletContext,
   ]);
 
-  // BROADCAST
   useEffect(() => {
-    if (transaction?.signature) {
-      if (cosmosChainIds?.includes(selectedChainId)) {
-        broadcastTransaction(transaction, {
-          onSuccess: (values) => {
-            if (values.error) {
-              console.warn(values.error.message);
-            } else {
-              setTransactionHash(values.hash);
-              setTransaction(undefined);
-            }
-          },
-        });
+    const chainId = blinkConfig.transactionData.chainId;
+
+    if (craftCosmosTransaction && cosmosAccounts.length) {
+      // FIXME How to ensure to only propose chainIds for available addresses ?
+      const sender = cosmosAccounts.find(
+        (account) => account.chainId === chainId
+      )?.address;
+
+      if (!sender) {
+        return;
+      }
+
+      const transactionData: TransactionData = {
+        ...blinkConfig.transactionData,
+        sender,
+        format: "json",
+      };
+
+      transactionEncode(transactionData, setCosmosTransaction);
+
+      if (cosmosTransaction?.encoded) {
+        Keplr.sign(
+          keplrSdk!,
+          cosmosChains!,
+          cosmosTransaction!,
+          setCosmosTransaction
+        );
+
+        if (cosmosTransaction?.signature) {
+          if (cosmosChainIds?.includes(chainId!)) {
+            transactionBroadcast(cosmosTransaction);
+          }
+        }
       }
     }
   }, [
-    broadcastTransaction,
+    blinkConfig.transactionData,
+    cosmosAccounts,
     cosmosChainIds,
-    selectedChainId,
-    setTransaction,
-    setTransactionHash,
-    transaction,
-    transaction?.signature,
+    cosmosChainIdsMapping,
+    cosmosChains,
+    cosmosTransaction,
+    craftCosmosTransaction,
+    keplrSdk,
+  ]);
+  */
+
+  const action = useCallback(() => {
+    const chainId = blinkConfig.transactionData.chainId;
+    if (chainId) {
+      if (evmChainIds?.includes(chainId)) {
+        metamaskAction();
+      } else if (cosmosChainIds?.includes(chainId)) {
+        //keplrAction();
+      }
+    }
+  }, [
+    blinkConfig.transactionData.chainId,
+    cosmosChainIds,
+    evmChainIds,
+    metamaskAction,
   ]);
 
   return (

@@ -5,15 +5,19 @@ import { WalletName } from "~/types/wallets";
 import { etherumNetworkConfig } from "./utils/ethereumNetworks";
 
 export class Metamask {
-  static getAddresses = async (
+  static getAccounts = async (
     sdk: MetaMaskSDK,
-    wallet: WalletContextType,
-    evmChainIds: string[]
+    //wallet: WalletContextType,
+    evmChainIds: string[],
+    setAccounts: (accounts: Account[]) => void
   ): Promise<void> => {
+    // FIXME DEBUG TBR
+    console.log("XXX - Metamask - getAccounts");
+
     try {
       const metamaskAddresses: string[] = await sdk?.connect();
 
-      if (metamaskAddresses && evmChainIds) {
+      if (metamaskAddresses) {
         const addresses: Account[] = [];
         // NOTE Using only 1st address in metamask
         const address = metamaskAddresses[0];
@@ -27,7 +31,8 @@ export class Metamask {
           });
         }
 
-        wallet.addAccounts(addresses);
+        //wallet.addAccounts(addresses);
+        setAccounts(addresses);
       } else {
         console.warn(
           "Failed to connect to Metamask, verify if you allow connectivity"
@@ -40,9 +45,11 @@ export class Metamask {
 
   static signAndBroadcast = async (
     sdk: MetaMaskSDK,
-    wallet: WalletContextType,
+    //wallet: WalletContextType,
     evmChains: Chain[],
-    transaction: Transaction
+    transaction: Transaction,
+    setSignTransaction: (sign: boolean) => void,
+    setTransaction: (transaction: Transaction | undefined) => void
   ): Promise<void> => {
     const provider = sdk?.getProvider();
 
@@ -73,16 +80,17 @@ export class Metamask {
         throw switchError;
       }
 
-      const txHash = await provider.request({
-        method: "eth_sendTransaction",
-        params: [transaction.encoded],
-      });
-
-      if (typeof txHash === "string") {
-        wallet.setTransactionHash(txHash);
-      } else {
-        console.warn("Transaction failed");
+      try {
+        await provider.request({
+          method: "eth_sendTransaction",
+          params: [transaction.encoded],
+        });
+      } catch (e) {
+        console.warn("Transaction failed:", e);
       }
+
+      setSignTransaction(false);
+      setTransaction(undefined);
     }
   };
 }

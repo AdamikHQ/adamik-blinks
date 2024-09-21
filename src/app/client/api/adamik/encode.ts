@@ -6,6 +6,7 @@ import { Transaction, TransactionData } from "~/types/adamik";
 // FIXME Just call server component instead?
 export const transactionEncode = async (
   transactionData: TransactionData
+  //setTransaction: (transaction: Transaction) => void
 ): Promise<Transaction> => {
   const response = await fetch(`${ADAMIK_API_URL}/transaction/encode`, {
     headers: {
@@ -30,5 +31,6 @@ export const transactionEncode = async (
     throw new Error(messageString);
   }
 
+  //setTransaction(transaction);
   return transaction;
 };
