@@ -18,6 +18,7 @@ const BLINK_CONFIGS: Map<string, BlinkConfig> = new Map([
         sender: "", // Completed during blink execution
         recipient: "0x8bc6922Eb94e4858efaF9F433c35Bc241F69e8a6",
         amount: "100000000000000", // 0.0001 ETH
+        amountUSD: "10",
       },
     },
   ],
