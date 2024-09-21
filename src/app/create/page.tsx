@@ -19,13 +19,16 @@ const DonatePage = () => {
   const [blinkCount, setBlinkCount] = useState(1);
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [selectedNetwork, setSelectedNetwork] = useState("linea"); // Default to Linea
+  const [selectedDonateNetwork, setSelectedDonateNetwork] = useState("linea"); // Default to Linea
+  const [selectedStakingNetwork, setSelectedStakingNetwork] =
+    useState("cosmoshub"); // Default to CosmosHub
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for controlling dropdown visibility
 
   // New form fields
   const [blinkName, setBlinkName] = useState("");
   const [blinkDescription, setBlinkDescription] = useState("");
   const [recipientAddress, setRecipientAddress] = useState("");
+  const [validatorAddress, setValidatorAddress] = useState("");
   const [defaultAmountUSD, setDefaultAmountUSD] = useState("");
 
   const handleSelectDonation = () => {
@@ -36,8 +39,13 @@ const DonatePage = () => {
     setSelectedOption("staking");
   };
 
-  const handleNetworkChange = (network: string) => {
-    setSelectedNetwork(network);
+  const handleDonateNetworkChange = (network: string) => {
+    setSelectedDonateNetwork(network);
+    setIsDropdownOpen(false); // Close the dropdown after selection
+  };
+
+  const handleStakingNetworkChange = (network: string) => {
+    setSelectedStakingNetwork(network);
     setIsDropdownOpen(false); // Close the dropdown after selection
   };
 
@@ -46,16 +54,15 @@ const DonatePage = () => {
     setBlinkName(""); // Reset blink name
     setBlinkDescription(""); // Reset blink description
     setRecipientAddress(""); // Reset recipient address
+    setValidatorAddress(""); // Reset validator address
     setDefaultAmountUSD(""); // Reset default amount in USD
-    setSelectedNetwork("linea"); // Reset selected network (if needed)
+    setSelectedDonateNetwork("linea"); // Reset selected network (if needed)
+    setSelectedStakingNetwork("cosmoshub"); // Reset selected network (if needed)
     setIsDropdownOpen(false); // Close dropdown
 
     // Go back to the selection screen
     setSelectedOption(null);
   };
-
-  // Counter to simulate blink generation
-  let blinkCounter = 0;
 
   const handleDeploy = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,10 +80,17 @@ const DonatePage = () => {
         imageUrl: "https://picsum.photos/500/300",
       },
       transactionData: {
-        chainId: selectedNetwork, // Use selected network for chainId
-        mode: TransactionMode.TRANSFER, // Use enum value here
+        chainId:
+          selectedOption === "donation"
+            ? selectedDonateNetwork
+            : selectedStakingNetwork, // Use selected network for chainId
+        mode:
+          selectedOption === "donation"
+            ? TransactionMode.TRANSFER
+            : TransactionMode.DELEGATE, // Use enum value here
         sender: "", // Sender completed during blink execution
         recipient: recipientAddress,
+        validatorAddress: validatorAddress,
         amount: "", // Placeholder if needed for future use
         amountUSD: defaultAmountUSD,
       } as TransactionData,
@@ -192,11 +206,11 @@ const DonatePage = () => {
                 >
                   <div className="bg-white border p-3 rounded-lg flex items-center justify-start">
                     <NetworkIcon
-                      network={selectedNetwork} // Ensure it's bound to the selectedNetwork state
+                      network={selectedDonateNetwork} // Ensure it's bound to the selectedNetwork state
                       variant="mono"
                       className="h-6 mr-2 text-black"
                     />
-                    <span className="text-black">{selectedNetwork}</span>{" "}
+                    <span className="text-black">{selectedDonateNetwork}</span>{" "}
                     {/* Display selected network */}
                   </div>
 
@@ -206,7 +220,7 @@ const DonatePage = () => {
                       {/* Bitcoin */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("bitcoin")}
+                        onClick={() => handleDonateNetworkChange("bitcoin")}
                       >
                         <NetworkIcon
                           network="bitcoin"
@@ -219,7 +233,7 @@ const DonatePage = () => {
                       {/* Ethereum */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("ethereum")}
+                        onClick={() => handleDonateNetworkChange("ethereum")}
                       >
                         <NetworkIcon
                           network="ethereum"
@@ -232,7 +246,7 @@ const DonatePage = () => {
                       {/* Cosmos */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("cosmos")}
+                        onClick={() => handleDonateNetworkChange("cosmos")}
                       >
                         <NetworkIcon
                           network="cosmos"
@@ -245,7 +259,7 @@ const DonatePage = () => {
                       {/* RootStock */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("rootstock")}
+                        onClick={() => handleDonateNetworkChange("rootstock")}
                       >
                         <NetworkIcon
                           network="rootstock"
@@ -258,7 +272,7 @@ const DonatePage = () => {
                       {/* Linea */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("linea")}
+                        onClick={() => handleDonateNetworkChange("linea")}
                       >
                         <NetworkIcon
                           network="linea"
@@ -271,7 +285,7 @@ const DonatePage = () => {
                       {/* Optimism */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("optimism")}
+                        onClick={() => handleDonateNetworkChange("optimism")}
                       >
                         <NetworkIcon
                           network="optimism"
@@ -284,7 +298,7 @@ const DonatePage = () => {
                       {/* Gnosis */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("gnosis")}
+                        onClick={() => handleDonateNetworkChange("gnosis")}
                       >
                         <NetworkIcon
                           network="gnosis"
@@ -297,7 +311,7 @@ const DonatePage = () => {
                       {/* Arbitrum */}
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
-                        onClick={() => handleNetworkChange("arbitrum")}
+                        onClick={() => handleDonateNetworkChange("arbitrum")}
                       >
                         <NetworkIcon
                           network="arbitrum"
@@ -326,7 +340,7 @@ const DonatePage = () => {
               {/* Enter Default Amount in USD */}
               <div className="text-left relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Enter Default Amount in USD
+                  Enter Amount in USD
                 </label>
                 <input
                   type="text"
@@ -369,18 +383,116 @@ const DonatePage = () => {
                 Previous
               </span>
             </div>
-
             <h1 className="text-3xl font-bold mb-4 text-black">
               Edit your Staking Blink
             </h1>
             <p className="text-lg mb-8 text-gray-600">
               Select the asset, amount, and destination address for staking
             </p>
-
             <form className="space-y-6" onSubmit={handleDeploy}>
-              {/* Staking Blink form fields here */}
-              {/* Copy-paste the donation fields here as needed */}
-            </form>
+              {/* Blink Details */}
+              <div className="text-left">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Blink Name
+                </label>
+                <input
+                  type="text"
+                  value={blinkName}
+                  onChange={(e) => setBlinkName(e.target.value)}
+                  placeholder="Enter Blink Name"
+                  className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+              </div>
+              <div className="text-left">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Blink Description
+                </label>
+                <textarea
+                  value={blinkDescription}
+                  onChange={(e) => setBlinkDescription(e.target.value)}
+                  placeholder="Enter Blink Description"
+                  className="w-full h-12 p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+              </div>
+
+              {/* Custom Dropdown for Network Selection */}
+              <div className="text-left">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Asset to Receive
+                </label>
+                <div
+                  className="relative inline-block w-full cursor-pointer"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <div className="bg-white border p-3 rounded-lg flex items-center justify-start">
+                    <NetworkIcon
+                      network={selectedStakingNetwork} // Ensure it's bound to the selectedNetwork state
+                      variant="mono"
+                      className="h-6 mr-2 text-black"
+                    />
+                    <span className="text-black">{selectedStakingNetwork}</span>{" "}
+                    {/* Display selected network */}
+                  </div>
+
+                  {/* Dropdown menu */}
+                  {isDropdownOpen && (
+                    <div className="absolute left-0 mt-2 bg-white border rounded-lg w-full z-10">
+                      {/* Cosmos */}
+                      <div
+                        className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleStakingNetworkChange("cosmos")}
+                      >
+                        <NetworkIcon
+                          network="cosmos"
+                          variant="mono"
+                          className="h-6 mr-2 text-black"
+                        />
+                        <span className="text-black">ATOM (Cosmos)</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Enter Validator Address */}
+              <div className="text-left">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter Validator Address
+                </label>
+                <input
+                  type="text"
+                  value={validatorAddress}
+                  onChange={(e) => setValidatorAddress(e.target.value)}
+                  placeholder="0x0000...0000"
+                  className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+              </div>
+              {/* Enter Default Amount in USD */}
+              <div className="text-left relative">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Enter Amount in USD
+                </label>
+                <input
+                  type="text"
+                  value={defaultAmountUSD}
+                  onChange={(e) => setDefaultAmountUSD(e.target.value)}
+                  placeholder="123"
+                  className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+                {/* Fixed USD ticker */}
+                <span className="absolute right-4 top-12 text-gray-600">
+                  USD
+                </span>
+              </div>
+              {/* Deploy Blink Button */}
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white w-full p-3 rounded-lg shadow-sm hover:bg-blue-600"
+                >
+                  Deploy Blink
+                </button>
+              </div>
+            </form>{" "}
           </div>
         </div>
       </div>

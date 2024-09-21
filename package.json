@@ -13,7 +13,6 @@
     "@cosmos-kit/keplr": "^2.12.2",
     "@cosmos-kit/react-lite": "^2.13.0",
     "@metamask/sdk-react": "^0.28.4",
-    "@svgr/webpack": "^8.1.0",
     "@tanstack/query-sync-storage-persister": "^5.56.2",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-query-persist-client": "^5.56.2",
