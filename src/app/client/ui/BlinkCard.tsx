@@ -16,6 +16,11 @@ export const BlinkCard = ({ config, action, decimals }: BlinkCardProps) => {
   // TODO ticker from chainId
   const ticker = "ETH";
 
+  const formattedAmount = amountToMainUnit(
+    config.transactionData.amount,
+    decimals
+  );
+
   return (
     <div className="flex">
       <div className="flex-none flex-col p-6 border-2 rounded-xl border-cyan-800 height-auto bg-stone-900">
@@ -42,8 +47,7 @@ export const BlinkCard = ({ config, action, decimals }: BlinkCardProps) => {
             className="w-full py-2 mt-4 text-sm font-semibold uppercase text-white bg-blue-600  hover:bg-blue-500 rounded-3xl"
             onClick={action}
           >
-            {/* TODO convert from minimum unit to main unit */}
-            {config.transactionData.amount} {ticker}
+            {formattedAmount} {ticker}
           </button>
         </>
 
