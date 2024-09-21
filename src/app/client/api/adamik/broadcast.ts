@@ -12,10 +12,6 @@ export type BroadcastResponse = {
 export const transactionBroadcast = async (
   transaction: Transaction
 ): Promise<BroadcastResponse> => {
-  //*
-  console.log("XXX - BROADCAST - transaction:", transaction);
-  return { hash: "dummy" };
-  /*/
   const response = await fetch(`${ADAMIK_API_URL}/transaction/broadcast`, {
     headers: {
       Authorization: process.env.ADAMIK_API_KEY || "",
@@ -31,5 +27,4 @@ export const transactionBroadcast = async (
   }
 
   return result as BroadcastResponse;
-  //*/
 };

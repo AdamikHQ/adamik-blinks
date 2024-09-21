@@ -235,7 +235,7 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
       broadcastTransaction(cosmosTransaction, {
         onSuccess: (settledTransaction) => {
           setCosmosTransaction(undefined);
-          setBroadcastCosmosTransaction(true);
+          setBroadcastCosmosTransaction(false);
         },
       });
     }
