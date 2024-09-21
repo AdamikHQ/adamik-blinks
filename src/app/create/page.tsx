@@ -213,7 +213,7 @@ const DonatePage = () => {
                           variant="mono"
                           className="h-6 mr-2 text-black"
                         />
-                        <span className="text-black">Linea (Ethereum)</span>
+                        <span className="text-black">ETH (Linea)</span>
                       </div>
                       <div
                         className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
@@ -224,7 +224,7 @@ const DonatePage = () => {
                           variant="mono"
                           className="h-6 mr-2 text-black"
                         />
-                        <span className="text-black">Optimism (L2)</span>
+                        <span className="text-black">OP (Optimism)</span>
                       </div>
                     </div>
                   )}
