@@ -1,5 +1,4 @@
 import { WalletName } from "~/types/wallets";
-import { WalletContextType } from "../hooks/useWallet";
 import { WalletClientContext } from "@cosmos-kit/core";
 import { Account, Chain, Transaction } from "~/types/adamik";
 

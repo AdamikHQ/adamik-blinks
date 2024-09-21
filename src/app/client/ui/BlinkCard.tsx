@@ -32,15 +32,16 @@ export const BlinkCard = ({ config, action, chain }: BlinkCardProps) => {
         <div className="text-sm font-thin tracking-wide">
           {config.metadata.description}
         </div>
-
         {/* Action Button */}
         <button
           className="w-full py-2 mt-4 text-sm font-semibold uppercase text-white bg-blue-600 hover:bg-blue-500 rounded-3xl"
           onClick={action}
         >
-          {formattedAmount} {chain?.ticker}
+          {config.transactionData.amountUSD} USD
         </button>
-
+        <div className="mt-2 text-sm text-slate-500">
+          <p className="italic">To be paid in {chain?.ticker}</p>
+        </div>
         {/* "Powered by" Section with URL */}
         <div className="mt-4 text-right">
           <span className="text-sm text-slate-500">Powered by </span>

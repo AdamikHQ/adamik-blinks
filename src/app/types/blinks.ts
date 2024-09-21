@@ -18,6 +18,7 @@ type BlinkTransactionData = {
 */
 
 type BlinkConfig = {
+  id: string;
   metadata: BlinkMetadata;
   //transactionData: BlinkTransactionData;
   transactionData: TransactionData;

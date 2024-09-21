@@ -1,6 +1,5 @@
 import { MetaMaskSDK } from "@metamask/sdk-react";
 import { Account, Chain, Transaction, TransactionData } from "~/types/adamik";
-import { WalletContextType } from "../hooks/useWallet";
 import { WalletName } from "~/types/wallets";
 import { etherumNetworkConfig } from "./utils/ethereumNetworks";
 

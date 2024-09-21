@@ -1,11 +1,16 @@
 "use client";
+
 import React, { useState } from "react";
 import { NetworkIcon } from "@web3icons/react"; // Assuming this is the correct path
 import { BlinkConfig } from "~/types/blinks"; // Assuming this is the correct path
 import { TransactionData, TransactionMode } from "~/types/adamik"; // Assuming this is the correct path
-import { BLINK_CONFIGS } from "~/server/configs_TMP";
+import { useBlinkConfigs } from "~/client/hooks/useBlinkConfigs";
 
 const DonatePage = () => {
+  const { blinkConfigs, addBlinkConfig } = useBlinkConfigs();
+
+  const [blinkCount, setBlinkCount] = useState(1);
+
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedNetwork, setSelectedNetwork] = useState("linea"); // Default to Linea
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for controlling dropdown visibility
@@ -29,17 +34,15 @@ const DonatePage = () => {
     setIsDropdownOpen(false); // Close the dropdown after selection
   };
 
-  // Counter to simulate blink generation
-  let blinkCounter = 0;
-
   const handleDeploy = (e: React.FormEvent) => {
     e.preventDefault();
 
     // Increment counter for new blink
-    blinkCounter += 1;
-    const blinkId = `default-${blinkCounter.toString().padStart(4, "0")}`;
+    const blinkId = `default-${blinkCount.toString().padStart(4, "0")}`;
+    setBlinkCount(blinkCount + 1);
 
     const newBlinkConfig: BlinkConfig = {
+      id: blinkId,
       metadata: {
         name: blinkName,
         url: "https://adamik.io",
@@ -56,10 +59,12 @@ const DonatePage = () => {
       } as TransactionData,
     };
 
-    // For now, logging the new blink configuration
-    console.log("Blink Config Generated: ", blinkId, newBlinkConfig);
-    BLINK_CONFIGS.set(blinkId, newBlinkConfig);
-    console.log(BLINK_CONFIGS);
+    addBlinkConfig(newBlinkConfig);
+
+    // FIXME DEBUG TBR
+    //console.log("XXX - generator - blinkId: ", blinkId);
+    //console.log("XXX - generator - blinkConfigs: ", blinkConfigs);
+
     // Here you would submit or use the `newBlinkConfig` to trigger any API or state update
   };
 

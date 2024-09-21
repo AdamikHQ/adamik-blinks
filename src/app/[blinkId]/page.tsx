@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSDK } from "@metamask/sdk-react";
 import { useChains } from "~/client/hooks/useChains";
-import { BLINK_CONFIGS } from "~/server/configs_TMP";
 import { Metamask } from "~/client/wallets/metamask";
 import { Account, Transaction, TransactionData } from "~/types/adamik";
 import { BlinkCard } from "~/client/ui/BlinkCard";
@@ -11,12 +10,15 @@ import { useWalletClient } from "@cosmos-kit/react-lite";
 import { Keplr } from "~/client/wallets/keplr";
 import { useEncodeTransaction } from "~/client/hooks/useEncodeTransaction";
 import { useBroadcastTransaction } from "~/client/hooks/useBroadcastTransaction";
+import { useBlinkConfigs } from "~/client/hooks/useBlinkConfigs";
 
 export default function Blink({ params }: { params: { blinkId: string } }) {
   const { blinkId } = params;
 
   const { sdk: metamaskSdk } = useSDK();
   const keplrSdk = useWalletClient("keplr-extension");
+
+  const { blinkConfigs } = useBlinkConfigs();
 
   const [evmAccounts, setEvmAccounts] = useState<Account[]>([]);
   const [craftEvmTransaction, setCraftEvmTransaction] =
@@ -45,14 +47,16 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
   // TODO Dissociate a blink from a chainId, i.e allow a blink to work with different chainIds
   //const [selectedChainId, setSelectedChainId] = useState<string>("osmosis");
 
-  console.log(blinkId);
+  const blinkConfig = useMemo(() => {
+    // FIXME DEBUG TBR
+    //console.log("XXX - blink - blinkId:", blinkId);
+    //console.log("XXX - blink - blinkConfigs:", blinkConfigs);
 
-  console.log(BLINK_CONFIGS);
-
-  const blinkConfig = useMemo(
-    () => BLINK_CONFIGS.get(blinkId) || BLINK_CONFIGS.get("default")!,
-    [blinkId, BLINK_CONFIGS]
-  );
+    return (
+      blinkConfigs.find((config) => config.id === blinkId) ||
+      blinkConfigs.find((config) => config.id === "default")!
+    );
+  }, [blinkConfigs, blinkId]);
 
   const { mutate: encodeTransaction } = useEncodeTransaction();
   const { mutate: broadcastTransaction } = useBroadcastTransaction();
