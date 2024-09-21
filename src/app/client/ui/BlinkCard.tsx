@@ -47,8 +47,10 @@ export const BlinkCard = ({ config, action, chain }: BlinkCardProps) => {
           <a
             href={config.metadata.url}
             className="text-blue-500 text-sm hover:underline"
+            target="_blank" // Optional: Opens the link in a new tab
+            rel="noopener noreferrer" // Security best practice for external links
           >
-            {config.metadata.url}
+            Adamik
           </a>
         </div>
       </div>
