@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { WalletProvider } from "~/client/providers/WalletProvider";
+import { QueryProvider } from "./client/providers/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex overflow-hidden w-full h-full absolute justify-center items-center">
-        <WalletProvider>{children}</WalletProvider>
+        <WalletProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </WalletProvider>
       </body>
     </html>
   );
