@@ -91,9 +91,9 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
   {
     id: "151020",
     metadata: {
-      name: "Stake 10 USD with Meria",
+      name: "Stake 5 USD with Meria",
       url: "https://adamik.io",
-      description: "Delegate 10 USD of ATOM tokens to Meria validator",
+      description: "Delegate 5 USD of ATOM tokens to Meria validator",
       imageUrl: "https://picsum.photos/500/300",
     },
     transactionData: {
