@@ -46,10 +46,6 @@ export class Metamask {
   ): Promise<void> => {
     const provider = sdk?.getProvider();
 
-    // FIXME DEBUG TBR
-    //console.log("XXX - metamask sign - provider:", provider);
-    console.log("XXX - metamask sign - transaction:", transaction);
-
     if (provider && transaction) {
       const chainId = transaction.data.chainId;
       const chain = evmChains?.find((chain) => chain.id === chainId);
@@ -59,8 +55,6 @@ export class Metamask {
       }
 
       try {
-        // FIXME DEBUG TBR
-        console.log("XXX - metamask sign - wallet_switchEthereumChain");
         await provider.request({
           method: "wallet_switchEthereumChain",
           params: [{ chainId: "0x" + Number(chain.nativeId).toString(16) }],
@@ -68,8 +62,6 @@ export class Metamask {
       } catch (switchError: any) {
         if (switchError.code === 4902) {
           try {
-            // FIXME DEBUG TBR
-            console.log("XXX - metamask sign - wallet_addEthereumChain");
             await provider.request({
               method: "wallet_addEthereumChain",
               params: [etherumNetworkConfig[chain.params.name]],
@@ -81,8 +73,6 @@ export class Metamask {
         throw switchError;
       }
 
-      // FIXME DEBUG TBR
-      console.log("XXX - metamask sign - eth_sendTransaction");
       const txHash = await provider.request({
         method: "eth_sendTransaction",
         params: [transaction.encoded],
