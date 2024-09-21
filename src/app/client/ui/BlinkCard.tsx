@@ -3,29 +3,27 @@
 import { BlinkConfig } from "~/types/blinks";
 import { amountToMainUnit } from "../logic/utils";
 import { useMemo } from "react";
+import { Chain } from "~/types/adamik";
 
 type BlinkCardProps = {
   config: BlinkConfig;
   action: () => void;
-  decimals: number | undefined; // FIXME Should be provided differently
+  chain: Chain | undefined;
   //ticker?: string;
   //donateValue?: number[] | string;
   //donateRedirectUrl?: string;
 };
 
-export const BlinkCard = ({ config, action, decimals }: BlinkCardProps) => {
-  // TODO ticker from chainId
-  const ticker = "ETH";
-
+export const BlinkCard = ({ config, action, chain }: BlinkCardProps) => {
   const formattedAmount = useMemo(
     () =>
-      decimals
-        ? amountToMainUnit(config.transactionData.amount, decimals)
+      chain?.decimals
+        ? amountToMainUnit(config.transactionData.amount, chain.decimals)
         : undefined,
-    [config.transactionData.amount, decimals]
+    [config.transactionData.amount, chain]
   );
 
-  return !formattedAmount ? null : (
+  return !chain ? null : (
     <div className="flex">
       <div className="flex-none flex-col p-6 border-2 rounded-xl border-cyan-800 height-auto bg-stone-900">
         <div className="w-[400px] mb-4 rounded-xl">
@@ -51,7 +49,9 @@ export const BlinkCard = ({ config, action, decimals }: BlinkCardProps) => {
             className="w-full py-2 mt-4 text-sm font-semibold uppercase text-white bg-blue-600  hover:bg-blue-500 rounded-3xl"
             onClick={action}
           >
-            {formattedAmount} {ticker}
+            {/* FIXME Hack, to be reverted */}
+            {/* {formattedAmount} {chain?.ticker} */}
+            2.5 USD
           </button>
         </>
 
