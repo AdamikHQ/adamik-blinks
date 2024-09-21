@@ -51,7 +51,7 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
 
   const blinkConfig = useMemo(
     () => BLINK_CONFIGS.get(blinkId) || BLINK_CONFIGS.get("default")!,
-    [blinkId, BLINK_CONFIGS]
+    [blinkId]
   );
 
   const { mutate: encodeTransaction } = useEncodeTransaction();
