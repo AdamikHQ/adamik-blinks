@@ -43,9 +43,13 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
   // TODO Dissociate a blink from a chainId, i.e allow a blink to work with different chainIds
   //const [selectedChainId, setSelectedChainId] = useState<string>("osmosis");
 
+  console.log(blinkId);
+
+  console.log(BLINK_CONFIGS);
+
   const blinkConfig = useMemo(
     () => BLINK_CONFIGS.get(blinkId) || BLINK_CONFIGS.get("default")!,
-    [blinkId]
+    [blinkId, BLINK_CONFIGS]
   );
 
   const { mutate: encodeTransaction } = useEncodeTransaction();

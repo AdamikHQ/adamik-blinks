@@ -59,6 +59,7 @@ const DonatePage = () => {
     // For now, logging the new blink configuration
     console.log("Blink Config Generated: ", blinkId, newBlinkConfig);
     BLINK_CONFIGS.set(blinkId, newBlinkConfig);
+    console.log(BLINK_CONFIGS);
     // Here you would submit or use the `newBlinkConfig` to trigger any API or state update
   };
 
