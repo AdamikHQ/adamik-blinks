@@ -58,6 +58,26 @@ const BLINK_CONFIGS: Map<string, BlinkConfig> = new Map([
       },
     },
   ],
+
+  [
+    "08021987",
+    {
+      metadata: {
+        name: "Donate 5$ of ARB token",
+        url: "https://adamik.io",
+        description: "Payment of $5 USD equivalent of ARB",
+        imageUrl: "https://picsum.photos/500/300",
+      },
+      transactionData: {
+        chainId: "arbitrum",
+        mode: TransactionMode.TRANSFER,
+        sender: "", // Completed during blink execution
+        recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215",
+        amountUSD: "5",
+        amount: "82189529053998530", // 1 ETH
+      },
+    },
+  ],
 ]);
 
 export { BLINK_CONFIGS };
