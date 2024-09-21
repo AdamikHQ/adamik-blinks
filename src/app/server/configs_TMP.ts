@@ -57,9 +57,9 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
   {
     id: "080287",
     metadata: {
-      name: "Donate 5$ of ARB token",
+      name: "Donate 5 USD of ARB token",
       url: "https://adamik.io",
-      description: "Payment of $5 USD equivalent of ARB",
+      description: "Payment of 5 USD equivalent of ARB",
       imageUrl: "https://picsum.photos/500/300",
     },
     transactionData: {
@@ -67,6 +67,24 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       mode: TransactionMode.TRANSFER,
       sender: "", // Completed during blink execution
       recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215",
+      amountUSD: "5",
+      amount: "8218952905399853000",
+    },
+  },
+  {
+    id: "151020",
+    metadata: {
+      name: "Stake 10 USD with Meria",
+      url: "https://adamik.io",
+      description: "Delegate 10 USD of ATOM tokens to Meria validator",
+      imageUrl: "https://picsum.photos/500/300",
+    },
+    transactionData: {
+      chainId: "cosmoshub",
+      mode: TransactionMode.DELEGATE,
+      sender: "", // Completed during blink execution
+      recipient: "", // Useless for staking
+      validatorAddress: "cosmosvaloper1wrx0x9m9ykdhw9sg04v7uljme53wuj03aa5d4f",
       amountUSD: "5",
       amount: "82189529053998530", // 1 ETH
     },
