@@ -38,7 +38,7 @@ export class Metamask {
     }
   };
 
-  static sign = async (
+  static signAndBroadcast = async (
     sdk: MetaMaskSDK,
     wallet: WalletContextType,
     evmChains: Chain[],
