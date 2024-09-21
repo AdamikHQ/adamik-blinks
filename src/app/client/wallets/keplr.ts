@@ -6,7 +6,6 @@ import { Account, Chain, Transaction } from "~/types/adamik";
 export class Keplr {
   static getAccounts = async (
     sdk: WalletClientContext,
-    //wallet: WalletContextType,
     cosmosChainIdsMapping: Map<string, string>,
     setAccounts: (accounts: Account[]) => void,
     setCraftTransaction: (craft: boolean) => void
@@ -28,19 +27,17 @@ export class Keplr {
       }
 
       // For each supported (Adamik) chain ID, get its (single) address from Keplr
+      const accounts: Account[] = [];
       cosmosChainIdsMapping.forEach(async (nativeId, chainId) => {
         try {
           const account = await client.getAccount?.(nativeId);
           if (account) {
-            //wallet.addAccounts([
-            setAccounts([
-              {
-                address: account.address,
-                pubKey: Buffer.from(account.pubkey).toString("hex"),
-                chainId,
-                signer: WalletName.KEPLR,
-              },
-            ]);
+            accounts.push({
+              address: account.address,
+              pubKey: Buffer.from(account.pubkey).toString("hex"),
+              chainId,
+              signer: WalletName.KEPLR,
+            });
             setCraftTransaction(true);
           }
         } catch (err) {
@@ -48,6 +45,7 @@ export class Keplr {
           return;
         }
       });
+      setAccounts(accounts);
     }
   };
 
@@ -55,6 +53,8 @@ export class Keplr {
     sdk: WalletClientContext,
     cosmosChains: Chain[],
     transaction: Transaction,
+    setSignTransaction: (sign: boolean) => void,
+    setBroadcastTransaction: (sign: boolean) => void,
     setTransaction: (transaction: Transaction | undefined) => void
   ): Promise<void> => {
     const { client } = sdk;
@@ -73,12 +73,14 @@ export class Keplr {
         transaction.encoded as any
       );
 
-      transaction &&
-        signedTransaction &&
+      if (transaction && signedTransaction) {
+        setSignTransaction(false);
+        setBroadcastTransaction(true);
         setTransaction({
           ...transaction,
           signature: signedTransaction?.signature.signature,
         });
+      }
     }
   };
 }

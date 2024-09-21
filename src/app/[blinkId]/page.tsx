@@ -9,8 +9,6 @@ import { Account, Transaction, TransactionData } from "~/types/adamik";
 import { BlinkCard } from "~/client/ui/BlinkCard";
 import { useWalletClient } from "@cosmos-kit/react-lite";
 import { Keplr } from "~/client/wallets/keplr";
-//import { transactionEncode } from "~/client/api/adamik/encode";
-//import { transactionBroadcast } from "~/client/api/adamik/broadcast";
 import { useEncodeTransaction } from "~/client/hooks/useEncodeTransaction";
 import { useBroadcastTransaction } from "~/client/hooks/useBroadcastTransaction";
 
@@ -30,6 +28,10 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
 
   const [cosmosAccounts, setCosmosAccounts] = useState<Account[]>([]);
   const [craftCosmosTransaction, setCraftCosmosTransaction] =
+    useState<boolean>(false);
+  const [signCosmosTransaction, setSignCosmosTransaction] =
+    useState<boolean>(false);
+  const [broadcastCosmosTransaction, setBroadcastCosmosTransaction] =
     useState<boolean>(false);
   const [cosmosTransaction, setCosmosTransaction] = useState<
     Transaction | undefined
@@ -95,16 +97,23 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
         );
   }, [chains, cosmosChainIdsMapping]);
 
-  const metamaskAction = useCallback(() => {
-    if (!evmAccounts.length) {
-      Metamask.getAccounts(metamaskSdk!, evmChainIds!, setEvmAccounts);
-    }
+  // METAMASK //////////////////////////////////////////////////////////////////////////////
 
+  // GET ADDRESSES
+  const metamaskAction = useCallback(() => {
     if (evmAccounts.length) {
       setCraftEvmTransaction(true);
+    } else {
+      Metamask.getAccounts(
+        metamaskSdk!,
+        evmChainIds!,
+        setEvmAccounts,
+        setCraftEvmTransaction
+      );
     }
   }, [evmAccounts.length, evmChainIds, metamaskSdk]);
 
+  // CRAFT
   useEffect(() => {
     if (craftEvmTransaction && evmAccounts.length) {
       // FIXME How to ensure to only propose chainIds for available addresses ?
@@ -122,15 +131,13 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
         format: "json",
       };
 
-      //transactionEncode(transactionData, setEvmTransaction);
       encodeTransaction(transactionData, {
         onSuccess: (settledTransaction) => {
           setEvmTransaction(settledTransaction);
           setSignEvmTransaction(true);
+          setCraftEvmTransaction(false);
         },
       });
-
-      setCraftEvmTransaction(false);
     }
   }, [
     blinkConfig.transactionData,
@@ -139,6 +146,7 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
     evmAccounts,
   ]);
 
+  // SIGN
   useEffect(() => {
     if (signEvmTransaction && evmTransaction?.encoded) {
       Metamask.signAndBroadcast(
@@ -151,11 +159,13 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
     }
   }, [evmChains, evmTransaction, metamaskSdk, signEvmTransaction]);
 
-  /*
-  const keplrAction = useCallback(() => {
-    const chainId = blinkConfig.transactionData.chainId;
+  // KEPLR //////////////////////////////////////////////////////////////////////////////
 
-    if (!cosmosAccounts.length) {
+  // GET ADDRESSES
+  const keplrAction = useCallback(() => {
+    if (cosmosAccounts.length) {
+      setCraftCosmosTransaction(true);
+    } else {
       Keplr.getAccounts(
         keplrSdk!,
         cosmosChainIdsMapping,
@@ -163,13 +173,9 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
         setCraftCosmosTransaction
       );
     }
-  }, [
-    blinkConfig.transactionData.chainId,
-    cosmosAccounts.length,
-    cosmosChainIdsMapping,
-    keplrSdk,
-  ]);
+  }, [cosmosAccounts.length, cosmosChainIdsMapping, keplrSdk]);
 
+  // CRAFT
   useEffect(() => {
     const chainId = blinkConfig.transactionData.chainId;
 
@@ -189,34 +195,47 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
         format: "json",
       };
 
-      transactionEncode(transactionData, setCosmosTransaction);
-
-      if (cosmosTransaction?.encoded) {
-        Keplr.sign(
-          keplrSdk!,
-          cosmosChains!,
-          cosmosTransaction!,
-          setCosmosTransaction
-        );
-
-        if (cosmosTransaction?.signature) {
-          if (cosmosChainIds?.includes(chainId!)) {
-            transactionBroadcast(cosmosTransaction);
-          }
-        }
-      }
+      encodeTransaction(transactionData, {
+        onSuccess: (settledTransaction) => {
+          setCosmosTransaction(settledTransaction);
+          setSignCosmosTransaction(true);
+          setCraftCosmosTransaction(false);
+        },
+      });
     }
   }, [
     blinkConfig.transactionData,
     cosmosAccounts,
-    cosmosChainIds,
-    cosmosChainIdsMapping,
-    cosmosChains,
-    cosmosTransaction,
     craftCosmosTransaction,
-    keplrSdk,
+    encodeTransaction,
   ]);
-  */
+
+  // SIGN
+  useEffect(() => {
+    if (signCosmosTransaction && cosmosTransaction?.encoded) {
+      Keplr.sign(
+        keplrSdk!,
+        cosmosChains!,
+        cosmosTransaction!,
+        setSignCosmosTransaction,
+        setBroadcastCosmosTransaction,
+        setCosmosTransaction
+      );
+    }
+  }, [cosmosChains, cosmosTransaction, keplrSdk, signCosmosTransaction]);
+
+  // BROADCAST
+  useEffect(() => {
+    if (broadcastCosmosTransaction && cosmosTransaction?.signature) {
+      //transactionBroadcast(cosmosTransaction);
+      broadcastTransaction(cosmosTransaction, {
+        onSuccess: (settledTransaction) => {
+          setCosmosTransaction(undefined);
+          setBroadcastCosmosTransaction(true);
+        },
+      });
+    }
+  }, [broadcastCosmosTransaction, broadcastTransaction, cosmosTransaction]);
 
   const action = useCallback(() => {
     const chainId = blinkConfig.transactionData.chainId;
@@ -224,23 +243,18 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
       if (evmChainIds?.includes(chainId)) {
         metamaskAction();
       } else if (cosmosChainIds?.includes(chainId)) {
-        //keplrAction();
+        keplrAction();
       }
     }
   }, [
     blinkConfig.transactionData.chainId,
     cosmosChainIds,
     evmChainIds,
+    keplrAction,
     metamaskAction,
   ]);
 
   return (
-    <BlinkCard
-      config={blinkConfig}
-      action={action}
-      chain={selectedChain}
-      //amount={blinkConfig.transactionData.amount}
-      //setTransactionAmount={setTransactionAmount}
-    />
+    <BlinkCard config={blinkConfig} action={action} chain={selectedChain} />
   );
 }

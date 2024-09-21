@@ -7,13 +7,10 @@ import { etherumNetworkConfig } from "./utils/ethereumNetworks";
 export class Metamask {
   static getAccounts = async (
     sdk: MetaMaskSDK,
-    //wallet: WalletContextType,
     evmChainIds: string[],
-    setAccounts: (accounts: Account[]) => void
+    setAccounts: (accounts: Account[]) => void,
+    setCraftTransaction: (craft: boolean) => void
   ): Promise<void> => {
-    // FIXME DEBUG TBR
-    console.log("XXX - Metamask - getAccounts");
-
     try {
       const metamaskAddresses: string[] = await sdk?.connect();
 
@@ -33,6 +30,7 @@ export class Metamask {
 
         //wallet.addAccounts(addresses);
         setAccounts(addresses);
+        setCraftTransaction(true);
       } else {
         console.warn(
           "Failed to connect to Metamask, verify if you allow connectivity"
@@ -45,7 +43,6 @@ export class Metamask {
 
   static signAndBroadcast = async (
     sdk: MetaMaskSDK,
-    //wallet: WalletContextType,
     evmChains: Chain[],
     transaction: Transaction,
     setSignTransaction: (sign: boolean) => void,
