@@ -30,6 +30,14 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
     isSuccess,
   } = useEncodeTransaction();
 
+  const selectedChain = useMemo(
+    () =>
+      (chains &&
+        Object.values(chains).find((chain) => chain.id === selectedChainId)) ||
+      undefined,
+    [chains, selectedChainId]
+  );
+
   const evmChains = useMemo(
     () =>
       chains && Object.values(chains).filter((chain) => chain.family === "evm"),
@@ -136,6 +144,6 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
   }, [evmChains, metamaskSdk, transaction, walletContext]);
 
   return (
-    <BlinkCard config={blinkConfig} action={action} decimals={decimals!} />
+    <BlinkCard config={blinkConfig} action={action} chain={selectedChain} />
   );
 }
