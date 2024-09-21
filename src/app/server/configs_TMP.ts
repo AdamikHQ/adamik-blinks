@@ -55,6 +55,23 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
     },
   },
   {
+    id: "160922",
+    metadata: {
+      name: "Donate 10 USD of ETH token",
+      url: "https://adamik.io",
+      description: "Payment of 10 USD equivalent of ETH (Linea)",
+      imageUrl: "https://picsum.photos/500/300",
+    },
+    transactionData: {
+      chainId: "linea",
+      mode: TransactionMode.TRANSFER,
+      sender: "", // Completed during blink execution
+      recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215",
+      amountUSD: "10",
+      amount: "4200000000000000",
+    },
+  },
+  {
     id: "080287",
     metadata: {
       name: "Donate 5 USD of ARB token",
@@ -87,23 +104,6 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       validatorAddress: "cosmosvaloper1wrx0x9m9ykdhw9sg04v7uljme53wuj03aa5d4f",
       amountUSD: "5",
       amount: "105000",
-    },
-  },
-  {
-    id: "160922",
-    metadata: {
-      name: "Donate 10 USD of ETH token",
-      url: "https://adamik.io",
-      description: "Payment of 10 USD equivalent of ETH (Linea)",
-      imageUrl: "https://picsum.photos/500/300",
-    },
-    transactionData: {
-      chainId: "linea",
-      mode: TransactionMode.TRANSFER,
-      sender: "", // Completed during blink execution
-      recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215",
-      amountUSD: "10",
-      amount: "330000000000000",
     },
   },
 ];
