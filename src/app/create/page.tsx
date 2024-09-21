@@ -87,9 +87,12 @@ const DonatePage = () => {
   if (selectedOption === null) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 w-full">
-        {/* Logo centered above the cards */}
-        <div className="mb-8">
-          <Image src={logo} alt="Logo" width={150} height={150} />
+        {/* Logo and Text in a Row */}
+        <div className="flex items-center mb-8">
+          <Image src={logo} alt="Logo" width={100} height={100} />
+          <span className="ml-4 text-4xl font-semibold text-black">
+            Universal Blink Engine
+          </span>
         </div>
 
         {/* Cards Container */}
@@ -281,6 +284,19 @@ const DonatePage = () => {
                           className="h-6 mr-2 text-black"
                         />
                         <span className="text-black">XDAI (Gnosis)</span>
+                      </div>
+
+                      {/* Arbitrum */}
+                      <div
+                        className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
+                        onClick={() => handleNetworkChange("arbitrum")}
+                      >
+                        <NetworkIcon
+                          network="arbitrum"
+                          variant="mono"
+                          className="h-6 mr-2 text-black"
+                        />
+                        <span className="text-black">ARB (Arbitrum)</span>
                       </div>
                     </div>
                   )}
