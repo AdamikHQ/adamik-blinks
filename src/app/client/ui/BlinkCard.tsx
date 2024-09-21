@@ -2,11 +2,12 @@
 
 import { BlinkConfig } from "~/types/blinks";
 import { amountToMainUnit } from "../logic/utils";
+import { useMemo } from "react";
 
 type BlinkCardProps = {
   config: BlinkConfig;
   action: () => void;
-  decimals: number; // FIXME Should be provided differently
+  decimals: number | undefined; // FIXME Should be provided differently
   //ticker?: string;
   //donateValue?: number[] | string;
   //donateRedirectUrl?: string;
@@ -16,12 +17,15 @@ export const BlinkCard = ({ config, action, decimals }: BlinkCardProps) => {
   // TODO ticker from chainId
   const ticker = "ETH";
 
-  const formattedAmount = amountToMainUnit(
-    config.transactionData.amount,
-    decimals
+  const formattedAmount = useMemo(
+    () =>
+      decimals
+        ? amountToMainUnit(config.transactionData.amount, decimals)
+        : undefined,
+    [config.transactionData.amount, decimals]
   );
 
-  return (
+  return !formattedAmount ? null : (
     <div className="flex">
       <div className="flex-none flex-col p-6 border-2 rounded-xl border-cyan-800 height-auto bg-stone-900">
         <div className="w-[400px] mb-4 rounded-xl">
