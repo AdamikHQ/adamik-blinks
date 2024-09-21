@@ -86,7 +86,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       recipient: "", // Useless for staking
       validatorAddress: "cosmosvaloper1wrx0x9m9ykdhw9sg04v7uljme53wuj03aa5d4f",
       amountUSD: "5",
-      amount: "82189529053998530", // 1 ETH
+      amount: "105000",
     },
   },
 ];
