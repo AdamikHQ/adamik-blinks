@@ -25,7 +25,7 @@ export default function Blink({ params }: { params: { blinkId: string } }) {
   const { transaction, setTransaction, setTransactionHash } = useTransaction();
 
   // TODO Handle UI setting + persistence in local storage
-  const [selectedChainId, setSelectedChainId] = useState<string>("osmosis"); // FIXME hardcoded
+  const [selectedChainId, setSelectedChainId] = useState<string>("base"); // FIXME hardcoded
   const [blinkConfig, setBlinkConfig] = useState<BlinkConfig>(
     BLINK_CONFIGS.get("default-base")! // FIXME hardcoded
   );
