@@ -120,7 +120,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       sender: "", // Completed during blink execution
       recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215", // Useless for staking
       amountUSD: "5",
-      amount: "79048000000000",
+      amount: "1",
     },
   },
   {
@@ -137,7 +137,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       sender: "", // Completed during blink execution
       recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215", // Useless for staking
       amountUSD: "5",
-      amount: "79048000000000",
+      amount: "1",
     },
   },
 ];
