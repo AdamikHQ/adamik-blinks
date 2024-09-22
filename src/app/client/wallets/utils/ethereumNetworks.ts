@@ -113,6 +113,20 @@ export const etherumNetworkConfig: Record<string, any> = {
     },
     isTestnet: true,
   },
+  "rootstock-testnet": {
+    adamikChainId: "rootstock-testnet",
+    chainId: "",
+    chainName: "RootStock Testnet",
+    rpcUrls: ["https://public-node.testnet.rsk.co"],
+    explorerUrl: (hash: string) =>
+      `https://sepolia-optimistic.etherscan.io/tx/${hash}`,
+    nativeCurrency: {
+      name: "RootStock Testnet",
+      symbol: "tRBTC",
+      decimals: 18,
+    },
+    isTestnet: true,
+  },
   arbitrum: {
     adamikChainId: "arbitrum",
     chainId: "0xa4b1",
