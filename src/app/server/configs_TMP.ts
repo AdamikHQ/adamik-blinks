@@ -106,6 +106,40 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       amount: "1050000",
     },
   },
+  {
+    id: "rootstock",
+    metadata: {
+      name: "Stake 5 USD with Rootstock",
+      url: "https://adamik.io",
+      description: "Payment of 5 USD equivalent of ETH (Rootstock)",
+      imageUrl: "https://picsum.photos/500/300",
+    },
+    transactionData: {
+      chainId: "rootstock",
+      mode: TransactionMode.TRANSFER,
+      sender: "", // Completed during blink execution
+      recipient: "", // Useless for staking
+      amountUSD: "5",
+      amount: "79048000000000",
+    },
+  },
+  {
+    id: "rootstock-testnet",
+    metadata: {
+      name: "Stake 5 USD with Rootstock",
+      url: "https://adamik.io",
+      description: "Payment of 5 USD equivalent of ETH (Rootstock)",
+      imageUrl: "https://picsum.photos/500/300",
+    },
+    transactionData: {
+      chainId: "rootstock-testnet",
+      mode: TransactionMode.TRANSFER,
+      sender: "", // Completed during blink execution
+      recipient: "", // Useless for staking
+      amountUSD: "5",
+      amount: "79048000000000",
+    },
+  },
 ];
 
 export { DEFAULT_BLINK_CONFIGS };
