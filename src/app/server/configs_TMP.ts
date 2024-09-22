@@ -91,7 +91,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
   {
     id: "151020",
     metadata: {
-      name: "Stake 5 USD with Meria",
+      name: "Donate 5 USD with Meria",
       url: "https://adamik.io",
       description: "Delegate 5 USD of ATOM tokens to Meria validator",
       imageUrl: "https://picsum.photos/500/300",
@@ -109,7 +109,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
   {
     id: "rootstock",
     metadata: {
-      name: "Stake 5 USD with Rootstock",
+      name: "Donate 5 USD with Rootstock",
       url: "https://adamik.io",
       description: "Payment of 5 USD equivalent of ETH (Rootstock)",
       imageUrl: "https://picsum.photos/500/300",
@@ -118,7 +118,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       chainId: "rootstock",
       mode: TransactionMode.TRANSFER,
       sender: "", // Completed during blink execution
-      recipient: "", // Useless for staking
+      recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215", // Useless for staking
       amountUSD: "5",
       amount: "79048000000000",
     },
@@ -126,7 +126,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
   {
     id: "rootstock-testnet",
     metadata: {
-      name: "Stake 5 USD with Rootstock",
+      name: "Donate 5 USD with Rootstock",
       url: "https://adamik.io",
       description: "Payment of 5 USD equivalent of ETH (Rootstock)",
       imageUrl: "https://picsum.photos/500/300",
@@ -135,7 +135,7 @@ const DEFAULT_BLINK_CONFIGS: BlinkConfig[] = [
       chainId: "rootstock-testnet",
       mode: TransactionMode.TRANSFER,
       sender: "", // Completed during blink execution
-      recipient: "", // Useless for staking
+      recipient: "0x0dc9b9fb11f927f94c138ec2fe0cb0e635e1a215", // Useless for staking
       amountUSD: "5",
       amount: "79048000000000",
     },
