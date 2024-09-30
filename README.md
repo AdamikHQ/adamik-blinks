@@ -1,8 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Universal Blink Engine
+
+This project is a multichain "blinks" engine developed during the EthGlobal hackathon in Singapore. It's designed to enhance the multichain experience by leveraging and expanding the "blinks" concept across multiple blockchain ecosystems.
+
+## What are Blinks?
+
+Blinks are blockchain links that allow users to perform on-chain actions—such as payments, voting, or NFT purchases—directly from URLs.
+
+## Project Overview
+
+The Universal Blink Engine aims to:
+
+1. Seamlessly integrate transactions and interactions across multiple blockchain ecosystems within Web 2 platforms.
+2. Expand the functionality of "blinks" beyond their initial implementation in the Solana ecosystem.
+3. Provide a user-friendly interface for creating and managing blinks for various blockchain actions.
+
+## Key Features
+
+- Multichain support for creating blinks
+- Support for donation and staking actions
+- Chrome extension for detecting and rendering blinks on web pages
+- Integration with the Adamik API for easy multichain transaction crafting
 
 ## Getting Started
 
-First, run the development server:
+To run the development server:
 
 ```bash
 npm run dev
@@ -16,21 +37,17 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the project and its development during the EthGlobal hackathon, check out our [blog post](https://adamik.io/blog/ethglobal-building-a-multichain-blinks-engine).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technologies Used
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Next.js
+- React
+- Tailwind CSS
+- Adamik API
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project won't be maintained anymore. We're not going to develop it further. Feel free to fork it and maintain it yourself.
